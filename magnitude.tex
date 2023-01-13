@@ -1,0 +1,215 @@
+\section{Persistent and magnitude homology}
+Magnitude homology is a homology theory of enriched categories, and in particular of metric spaces. It first arose as a categorification (in the Khovanov homology -- Jones polynomial sense), of the numerical size-like invariant known as magnitude. Both being homology theories for metric spaces, it is natural to ask how persistent and magnitude homology are related. We answer this question in this section.
+
+\subsection{Enriched categories}
+An ordinary (locally small) category $\cat{C}$ consists of a class of objects $\ob\cat{C}$, and for each pair of objects $x,y$ a set of morphisms $\cat{C}(x,y)$, together with composition and identities maps
+\[\cat{C}(x,y) \times \cat{C}(y,z) \to \cat{C}(x,z) \quad \text{and} \quad 1 \to \cat{C}(x,x),\]
+where $1$ is a fixed singleton set, for all objects $x$, $y$ and $z$. In addition to this, we have the usual associativity and identity axioms on these maps. The concept of an enriched category arises when we allow $\cat{C}(x,y)$ to be objects in some category $\cat{V}$ other than $\Set$.
+
+In order to have sensible composition and identities maps, we need $\cat{V}$ to have a notion of a product between two objects, and this product must have a unit element. Often times, like in ordinary categories, this is the categorical product, with unit element the empty product. However, this need not be the case, and a more general theory is useful. 
+\begin{definition}
+    A \textbf{monoidal structure} on an ordinary category $\cat{V}$ consists of a functor $- \otimes - : \cat{V} \times \cat{V} \to \cat{V}$, called the \textit{monoidal product}, and an object $\bone$ of $\cat{V}$, together with natural isomorphisms $\alpha$, $\lambda$ and $\rho$ with components
+    \[\alpha_{x,y,z} : x \otimes (y \otimes z) \to (x \otimes y) \otimes z, \quad \lambda_x : \bone \otimes x \to x \quad \text{and} \quad \rho_x : x \otimes \bone \to x,\]
+    satisfying two coherence axioms (see \cite[Chapter VII]{MacLane1978}). These isomorphisms are often called the \textit{associator}, \textit{left} and \textit{right unitor}, respectively. A \textbf{monoidal category} is a category equipped with a monoidal structure.
+\end{definition}
+
+\begin{example}\label{ex:prod_coprod_monoidal}
+    If a category $\cat{C}$ has finite products, then taking $\otimes$ to be the categorical product and $\bone$ the empty product gives a monoidal structure on $\cat{C}$. In this case, $\alpha$, $\lambda$ and $\rho$ can be easily specified using the universal property of products. Similarly, we could take $\otimes$ to be the coproduct of two objects instead, and $\bone$ the empty coproduct. For any commutative ring $R$, the category of (left) $R$-modules is monoidal, with monoidal product the tensor product, and unit $R$.
+\end{example}
+
+\begin{example}\label{ex:poset_monoidal}
+    Any poset with a monoid structure is a monoidal category. For instance, $\Z$ gives a category whose objects are the integers, and we have a morphism $a \to b$ precisely when $a \leq b$. Setting $a \otimes b = a + b$ and $\bone = 0$ gives it a monoidal structure. We will be particularly interested in the poset $[0,\infty]^\opp$ with addition. Since we are taking the opposite category, we have a morphism $a \to b$ precisely when $a \geq b$.
+\end{example}
+
+\begin{definition}
+    Let $\cat{V}$ be a monoidal category. A \textbf{category enriched over $\cat{V}$} (or \textbf{$\cat{V}$-category}) $\cat{C}$ consists of 
+    \begin{itemize}[nosep, leftmargin=1.2em]
+        \item a class of objects $\ob \cat{C}$;
+        \item for each $x,y \in \ob \cat{C}$, an object $\cat{C}(x,y)$ of $\cat{V}$;
+        \item for each $x,y,z \in \ob \cat{C}$, a composition morphism $\cat{C}(x,y) \otimes \cat{C}(y,z) \to \cat{C}(x,z)$ in $\cat{V}$;
+        \item for each $x \in \ob \cat{V}$, an identity morphism $\bone \to \cat{C}(x,x)$ in $\cat{V}$;
+    \end{itemize}
+    satisfying analogous axioms of associativity and identities (see \cite[Chapter 6]{Borceux1994}).
+\end{definition}
+
+\begin{example}
+    If we take $\cat{V} = \Set$ with the cartesian product as in Example \ref{ex:prod_coprod_monoidal}, then a $\cat{V}$-category is an ordinary category. The category $R\text{-}\Mod$ of left $R$-modules is enriched over itself. That composition is a morphism in $R\text{-}\Mod$ expresses the fact that composition of linear maps is a bilinear operation.
+\end{example}
+
+\begin{example}
+    Let $X$ be a small $[0,\infty]^\opp$-category, where we take the monoidal structure as in Example \ref{ex:poset_monoidal}. For each $x, y \in \ob X$, we have an extended real number $X(x,y)$ which we think of as the distance from $x$ to $y$. The composition morphism says precisely that $X(x,y) + X(y,z) \geq X(x,z)$ for any $x, y, z \in \ob X$, whereas the identity morphism expresses that $0 \geq X(x,x)$, and then $X(x,x) = 0$. Since we are enriching over a poset, the associativity and identities axioms are automatically satisfied, and so give us no more properties. These conditions make $\ob X$ a sort of `relaxed' metric space, where $X(x,y)$ need not equal $X(y,x)$, two distinct points may be distance zero apart, and the distance between two points may be $\infty$. This was first realised by Lawvere in \cite{Lawvere1973}, which is why we call small $[0,\infty]^\opp$-categories \textbf{Lawvere metric spaces}. 
+
+    If instead we take the monoidal product in $[0,\infty]^\opp$ to be the categorical product, then the composition law reduces to $\max\{X(x,y), X(y,z)\} \geq X(x,z)$, giving the notion of Lawvere ultrametric space.
+\end{example}
+
+\subsection{The nerve of an enriched category}
+The \textit{nerve} of an ordinary category $\cat{C}$ is a simplicial set $N(\cat{C})$ that sends $[n]$ to the set of composable $n$-tuples of morphisms in $\cat{C}$. The face and degeneracy maps are as follows
+\begin{align*}
+    (f_1,f_2,\dots,f_n) \quad &\xmapsto{\displaystyle d_0^n} \quad (f_2,\dots,f_n), \\
+    (f_1,\dots,f_i,f_{i+1},\dots,f_n) \quad &\xmapsto{\displaystyle d_i^n} \quad (f_1,\dots,f_{i+1}f_i, \dots, f_n) \quad \text{for } 0 < i < n, \\
+    (f_1,\dots,f_{n-1},f_n) \quad &\xmapsto{\displaystyle d_n^n} \quad (f_1,\dots,f_{n-1}), \\
+    (f_1,\dots,f_n) \quad & \xmapsto{\displaystyle s_0^n} \quad (1_{\dom f_1}, f_1, \dots, f_n), \\
+    (f_1,\dots,f_i,f_{i+1}\dots,f_n) \quad &\xmapsto{\displaystyle s^n_i} \quad (f_1,\dots,f_i, 1_{\cod f_i}, f_{i+1}, \dots, f_n) \quad \text{for } 0 < i \leq n.
+\end{align*}
+A concise way of writing down the set of $n$-simplices is
+\begin{equation}\label{eq:ordinary_nerve}
+    N(\cat{C})_n = \bigsqcup_{x_0,\dots,x_n} \cat{C}(x_0,x_1) \times \cdots \times \cat{C}(x_{n-1},x_n).
+\end{equation}
+
+In this section, we will study how to generalise this notion to enriched categories. Ideally, one would want to simply exchange the cartesian product for the monoidal product and the disjoint union for the coproduct in \eqref{eq:ordinary_nerve}. However, our enriching category $\cat{V}$ may not have coproducts. We can overcome this by passing to the presheaf category $\widehat{\cat{V}}$ instead, but first let us examine one more reason why this construction may fail.
+
+Restricting the face map $d_0^n$ to $\cat{C}(x_0,x_1) \times \cdots \times \cat{C}(x_{n-1},x_n)$, for some choice of $x_0,\dots,x_n \in \ob \cat{C}$, gives a map into $\cat{C}(x_1,x_2) \times \cdots \times \cat{C}(x_{n-1},x_n)$ which can be factored as
+\begin{equation}\label{eq:d_0^n}
+\begin{tikzcd}
+    \cat{C}(x_0,x_1) \times \cat{C}(x_1,x_2) \times \cdots \times \cat{C}(x_{n-1},x_n) \ar[dr, "d_0^n\vert"] \ar[d, "! \times 1"]\\
+    1 \times \cat{C}(x_1,x_2) \times \cdots \times \cat{C}(x_{n-1},x_n) \ar[r, "\lambda"] & \cat{C}(x_1,x_2) \times \cdots \times \cat{C}(x_{n-1},x_n)
+\end{tikzcd}
+\end{equation}
+where $!$ is the unique map $\cat{C}(x_0,x_1) \to 1$ and $\lambda$ is the monoidal left unitor. Here we use crucially that the monoidal identity in $\Set$ is the terminal object. A similar situation occurs with $d_n^n$, this time involving the right unitor. In a general monoidal category $\cat{V}$, there need not be a map from $\cat{C}(x_0,x_1)$ to the monoidal unit $\bone$. We therefore restrict ourselves to working with enriching categories $\cat{V}$ which are \textbf{semicartesian}, i.e. where the monoidal unit is terminal\footnote{See \cite{Leinster2016proj} for a discussion on why this condition is not as obscure as it may at first appear.}. Note that the remaining face maps and degeneracy maps are simply built up using the monoidal product, composition, and identities, so they do not pose a problem.
+
+To overcome the scarcity of coproducts, we use the category of presheaves on $\cat{V}$, which we denote $\widehat{\cat{V}} = \Set^{\cat{V}^\opp}$. The Yoneda lemma shows that the functor $y : \cat{V} \to \widehat{\cat{V}}$ given by $y(v) = \cat{V}(-,v)$ is full and faithful. This functor is commonly called the Yoneda embedding. The category $\widehat{\cat{V}}$ has all small colimits and they are computed `objectwise', i.e.
+\[\textstyle (\colim_I D)(v) = \colim_I D(v)\]
+for any functor $D : I \to \widehat{\cat{V}}$. In fact, $\widehat{\cat{V}}$ is the category obtained from $\cat{V}$ by adjoining all colimits in the freest possible way. This is made precise by the following proposition.
+\begin{proposition}
+    Let $\cat{C}$ and $\cat{D}$ be categories with $\cat{D}$ cocomplete and let $F: \cat{C} \to \cat{D}$ be any functor. Then there exists a functor $\widehat{F} : \widehat{\cat{C}} \to \cat{D}$ that preserves all colimits and that extends $F$ along $y$, i.e. the following diagram commutes up to natural isomorphism
+    \[\begin{tikzcd}
+        \cat{C} \ar[d, "y"] \ar[dr, "F"]\\
+        \widehat{\cat{C}} \ar[r, "\widehat{F}", dashed] & \cat{D}
+    \end{tikzcd}\]
+    Moreover, $\widehat{F}$ is uniquely determined up to natural isomorphism.
+\end{proposition}
+\begin{proof}[Proof sketch]
+    It follows from the Yoneda lemma that every presheaf is a colimit of representables, so, if $\widehat{F}$ is to preserve all colimits, it must be determined up to isomorphism by its action on the image of $y$.
+\end{proof}
+
+With this in mind, we make the following definition for the nerve of an enriched category. Because we are working with presheaves now, the nerve of an enriched category is no longer a single simplicial set, but a family of them, or more precisely a functor $\cat{V}^\opp \to \sSet$.
+\begin{definition}
+    Let $\cat{V}$ be a semicartesian monoidal category, and $\cat{C}$ be a small $\cat{V}$-category. The \textbf{nerve} of $\cat{C}$ is the functor $N(\cat{C}) : \cat{V}^\opp \to \sSet$, where for each $v \in \ob \cat{V}$, the set of $n$-simplices is given by
+    \[N(\cat{C})(v)_n = \bigsqcup_{x_0,\dots,x_n} \cat{V}(v, \cat{C}(x_0,x_1) \otimes \cdots \otimes \cat{C}(x_{n-1},x_n)).\]
+    The face maps $d_0^n$ and $d_n^n$ are analogous to the map shown in \eqref{eq:d_0^n}. The remaining face maps are built using the product and composition, and the degeneracy maps are built using the product and identities. For a morphism $f: v \to v'$ in $\cat{V}$, we get $N(\cat{C})(v')_n \to N(\cat{C})(v)_n$ induced by precompositing with $f$. It is straightforward to check that these maps come together to form a simplicial map $N(\cat{C})(v') \to N(\cat{C})(v)$.
+\end{definition}
+
+\begin{example}\label{ex:metric_nerve}
+    Let $\cat{V} = [0,\infty]^\opp$ and $X$ be a Lawvere metric space. We find an explicit description for the nerve of $X$. Note that $[0,\infty]^\opp$ is semicartesian, since the monoidal unit is $0$. For each $l \in [0,\infty]$, we have that
+    \[[0,\infty]^\opp(l, X(x_0,x_1) + \cdots + X(x_{n-1},x_n))\]
+    is nonempty and a singleton if and only if $l \geq X(x_0,x_1) + \cdots + X(x_{n-1},x_n)$. We see then that $N(X)(l)_n$ is canonically isomorphic to the set 
+    \[\{(x_0,\dots,x_n) \in X^{n+1} : X(x_0,x_1) + \cdots + X(x_{n-1},x_n) \leq l\}.\]
+    The face maps $d_i^n$ remove the $i$-th member of a tuple, while the degeneracy maps $s_i^n$ repeat it. Given $l' \geq l$, we get inclusions $N(X)(l)_n \subseteq N(X)(l')_n$.
+\end{example}
+
+\subsection{Coends}
+Ends and coends in category theory are a construction akin to limits and colimits. In fact, both can be defined in terms of each other (see \cite[\S IX.5]{MacLane1978}). For our purposes, we will only need the following (slightly less general) definition of a coend in terms of a colimit, taken from \cite{Otter2018}.
+\begin{definition}\label{def:coend}
+    Let $\cat{C}$ be a small category and $\cat{D}$ be a cocomplete category. Given a functor $F: \cat{C}^\opp \times \cat{C} \to \cat{D}$, its \textbf{coend}, denoted $\int^c F(c,c)$, is the coequaliser of the diagram
+    \[\begin{tikzcd}
+    \displaystyle \bigsqcup_{f : c \to c'} F(c',c) \ar[r, shift left] \ar[r, shift right] & \displaystyle \bigsqcup_{c \in \ob \cat{C}} F(c,c),
+    \end{tikzcd}\]
+    where for each $f: c \to c'$ in $\cat{C}$ the top morphism is given by $F(f, 1_c) : F(c',c) \to F(c,c)$ and the bottom morphism by $F(1_{c'}, f) : F(c',c) \to F(c',c')$.
+If the target category $\cat{D}$ is monoidal, with monoidal product $\otimes$, we define the \textbf{tensor product} of two functors $F: \cat{C}^\opp \to \cat{D}$ and $G: \cat{C} \to \cat{D}$ as the coend of the functor $\otimes (F \times G)$. More explicitly, 
+\[F \otimes_\cat{D} G = \int^c Fc \otimes Gc.\]
+\end{definition}
+This is a generalisation of the familiar concept of tensor product between two modules. Indeed, the category $\Ab$ of abelian groups is monoidal with the usual tensor product. We can see a ring $R$ as a one-object $\Ab$-category: the elements of the ring are the endomorphisms of this object, which can be added and multiplied (composed). Then a left $R$-module $M$ is precisely a functor $R \to \Ab$, while a right $R$-module $N$ is a functor $R^\opp \to \Ab$. The tensor product of these two functors is the coequaliser of
+\[\begin{tikzcd}
+    \displaystyle \bigsqcup_{r \in R} M \otimes N \ar[r, shift left] \ar[r, shift right] & M \otimes N.
+\end{tikzcd}\]
+A generating element $m \otimes n$ in the $r$-copy of $M \otimes N$ on the left-hand side is sent to $mr \otimes n$ by the top map, and to $m \otimes rn$ by the bottom one. These get identified in the coequaliser, which is then easily seen to be $M \otimes_R N$.
+
+\begin{example}\label{coend-geometric-realisation}
+    We have already met another example of a coend: the geometric realisation of a simplicial set. We have a functor $\Delta : \Delta \to \Top$ that sends $[n]$ to the regular $n$-simplex. Given a set $S$ and a topological space $X$, we can form the copower $S \cdot X = \bigsqcup_S X$, which consists of $\abs{S}$ disjoint copies of $X$. This defines a functor $\cdot : \Set \times \Top \to \Top$. Given a simplicial set $X : \Delta^\opp \to \Set$, its geometric realisation is given by $\int^{[n]} X[n] \cdot \Delta[n]$.
+\end{example}
+
+\subsection{Magnitude homology}
+In this section, we give a definition of magnitude homology, as presented in \cite{Leinster2016mag}. We write $\sAb$ for the category of simplicial abelian groups, i.e. functors $\Delta^\opp \to \Ab$, and $\Ch$ for the category of chain complexes of abelian groups. Let us write $A$ for a simplicial abelian group, with $A_n \coloneqq A[n]$ and the usual notation for face and degeneracy maps. This gives a chain complex $U(A)$, which we call the \textbf{unnormalised chain complex} of $A$, with $U(A)_n = A_n$ and boundary map
+\[\partial_n = \sum_{i=0}^n (-1)^n d_i^n : U(A)_n \to U(A)_{n-1}.\]
+The fact that this is a chain complex, i.e. that $\partial_n \partial_{n+1} = 0$ for all $n$, can be shown using the simplicial identities. This defines a functor $U : \sAb \to \Ch$. We can also construct a smaller, homotopy equivalent chain complex from $A$. Let $D(A)_n$ be the subgroup of $A_n$ generated by the image of the degeneracy maps, i.e. 
+\[D(A)_n = \ang*{ \bigcup_{i=0}^{n-1} s^{n-1}_i(A_{n-1})}\]
+for $n > 0$, and $D(A)_0 = 0$. One can show using the simplicial identities that the boundary map $\partial$ descends to the quotients $U(A)_n/D(A)_n$, giving a second chain complex which we call the \textbf{normalised chain complex} of $A$. In fact, $U(A)/D(A)$ is naturally chain homotopy equivalent to $U(A)$; see \cite[\S III.2]{Goerss2009}. This also gives a functor $\sAb \to \Ch$.
+
+Now let $\cat{C}$ be a small $\cat{V}$-category, with $\cat{V}$ a semicartesian monoidal category. We can consider the functor $\textrm{MC}(\cat{C})$ given by the composite
+\[\begin{tikzcd}
+    \cat{V}^\opp \ar[r, "N(\cat{C})"] & \sSet \ar[r, "\Z \cdot -"] & \sAb \ar[r] & \Ch,
+\end{tikzcd}\]
+where $\Z \cdot -$ is post-composition by the free abelian group functor $\Z : \Set \to \Ab$, and we can take the last arrow to be either the unnormalised or normalised chain complex functor. Because our last step will be to take the homology of a related complex, it does not matter which one we choose, since they are chain homotopy equivalent. We work with the unnormalised version for simplicity.
+
+Next, we introduce a \textbf{functor of coefficients} $A : \cat{V} \to \Ab$, which we see as a functor into $\Ch$ by considering an abelian group as a chain complex concentrated in degree zero. For the general definition, we require $A$ to be a small functor, which is a way of saying that its values are determined by its restriction to a set of objects. This is automatically true when $\cat{V}$ is small, as is the case for $[0,\infty]^\opp$.
+
+The last ingredient is to recall that $\Ch$ is a monoidal category with product given by the tensor product of chain complexes. In our case, one of the two chain complexes we will take the product of will always be concentrated in degree zero, so this has a particularly simple form. Indeed, if $(C, \partial)$ and $(C', \partial')$ are two chain complexes and $C'_n = 0$ for all $n \neq 0$, then $(C \otimes C')_n = C_n \otimes C'_0$ and the boundary map is simply $\partial_n \otimes 1$. We can now use the tensor product of Definition \ref{def:coend} to form the chain complex $\mathrm{MC}(\cat{C}) \otimes_{\cat{V}} A$.
+
+\begin{definition}\label{def:mag_hom}
+    Let $\cat{V}$ be a semicartesian monoidal category, $\cat{C}$ be a small $\cat{V}$-category and $A : \cat{V} \to \Ab$ be a small functor. The \textbf{magnitude homology of $\cat{C}$ with coefficients in $A$}, written $H_*(\cat{C}; A)$, is the homology of the chain complex $\mathrm{MC}(\cat{C}) \otimes_{\cat{V}} A$.
+\end{definition}
+
+We are interested in the case where $\cat{V}$ is $[0,\infty]^\opp$. The typical choice of coefficient functor is $\delta_l$ for some fixed $l \in [0,\infty]$, which sends $l$ and the identity on it to $\Z$ and $1_\Z$, and everything else to zero. Let us examine the chain complex $\mathrm{MC}(X) \otimes_{[0,\infty]^\opp} \delta_l$ for some Lawvere metric space $X$. According to our definition of a coend, this is the coequaliser of a diagram
+\[\begin{tikzcd}
+    \displaystyle \bigoplus_{m \geq m'} \mathrm{MC}(X)(m') \otimes \delta_l(m) \ar[r, shift left] \ar[r, shift right] &
+    \displaystyle \bigoplus_{m} \mathrm{MC}(X)(m) \otimes \delta_l(m).
+\end{tikzcd}\]
+The resulting coequaliser will be the quotient of the object on the right-hand side by the relations imposed by the two maps. Thanks to the simplicity of $\delta_l$, we can simplify this diagram greatly. Whenever $m \neq l$ we have $\delta_l(m) = 0$, so the right-hand side is simply $\mathrm{MC}(X)(l) \otimes \delta_l(l) = \mathrm{MC}(X)(l)$. Similarly, on the left-hand side we only need to consider those $m' \leq l$. Moreover, for all $m' < l$, the component of the bottom map out of $\mathrm{MC}(X)(m')$ is $\delta_l(l > m') = 0$, whereas for $l \geq l$ both maps are the identity. We are left with the cokernel of the map
+\[\begin{tikzcd}
+    \displaystyle \bigoplus_{l > m'} \mathrm{MC}(X)(m') \ar[r] &
+    \mathrm{MC}(X)(l).
+\end{tikzcd}\]
+These are chain complexes, so we look at the parts of degree $n$ individually. Then, using our description of the nerve in Example \ref{ex:metric_nerve}, this becomes
+\[\begin{tikzcd}
+    \displaystyle \bigoplus_{l>m'} \Z \cdot \{(x_0,\dots,x_n) \in X^{n+1} : X(x_0,x_1) + \cdots + X(x_{n-1},x_n) \leq m'\} \ar[d] \\
+    \Z \cdot \{(x_0,\dots,x_n) \in X^{n+1} : X(x_0,x_1) + \cdots + X(x_{n-1},x_n) \leq l\}.
+\end{tikzcd}\]
+Each of the components is induced by an inclusion of sets, so we see that the cokernel is the free abelian group on tuples $(x_0,\dots,x_n)$ in $X$ for which $X(x_0,x_1) + \cdots + X(x_{n-1},x_n) = l$. The boundary maps descend to this quotient as usual. This proves the following proposition, bringing Definition \ref{def:mag_hom} closer to \cite[Definition 3.3]{Leinster2021}. The definition there would result from taking the normalised chain complex instead.
+
+\begin{proposition}\label{prop:mag_hom_metric}
+    Let $X$ be a Lawvere metric space and $l \in [0,\infty]$. Then $H_*(X;\delta_l)$ is the homology of the complex $\mathrm{MC}_{\bullet,l}(X)$, defined as follows. The degree $n$ part is
+    \[\mathrm{MC}_{n,l} = \Z \cdot \{(x_0,\dots,x_n) \in X^{n+1} : X(x_0,x_1) + \cdots + X(x_{n-1},x_n) = l\}.\]
+    The boundary map $\partial_n : \mathrm{MC}_{n,l}(X) \to \mathrm{MC}_{n-1,l}(X)$ is the alternating sum $\sum_{i=0}^n (-1)^i d^n_i$, where $d_i^n$ is defined on basis elements as
+    \[\mathclap{d_i^n(x_0,\dots,x_n) = \begin{cases}
+        (x_0,\dots,x_{i-1},x_{i+1},\dots,x_n) & \text{if } X(x_{i-1}, x_{i+1}) = X(x_{i-1},x_i) + X(x_i, x_{i+1}), \\
+        0 & \text{otherwise}.
+    \end{cases}}\]
+\end{proposition}
+
+The magnitude homology of a metric space has been linked to familiar geometric notions. For instance, a metric space $X$ has $H_1(X;\delta_l) = 0$ for all $l \in [0,\infty]$ if and only if it is \textit{Merger convex}, which for closed subsets of $\R^d$ is equivalent to being convex \cite{Leinster2021}.
+
+Note that the condition in the definition of the maps $d_i^n$ is precisely detecting when the triangle inequality is an equality. There are, however, many examples of metric spaces where this is never the case; take, for instance, any finite subset of $\R^d$ where no three points lie on the same line. In those cases, the magnitude homology is equal to the complex $\mathrm{MC}_{*,l}$, which is very large, and so fails to summarise information about the space. This suggests that the coefficient functor $\delta_l$ is too restrictive, and we could instead consider $\delta_J$ for some interval $J \subseteq [0,\infty]$. This gives a `blurred' version of magnitude homology that is closely related to persistent homology. We study this relation in the next section.
+
+\subsection{Persistent and magnitude homology}
+
+Given any abstract simplicial complex, there are several ways of constructing a related simplicial set whose geometric realisation is homeomorphic to the geometric realisation of the original complex; see, for instance, the construction in \cite[Definition 6]{Otter2018}. Therefore, we may in general consider various ways of constructing an $[0,\infty]$-indexed family of simplicial set from a metric space $X$. With this in mind, we may define persistent homology in a broad sense for any functor $S(X) : [0,\infty] \to \sSet$ arising in some way from a metric space $X$. Concretely, it is the following composite functor
+\[\begin{tikzcd}
+    {[0,\infty]} \ar[r, "S(X)"] & \sSet 
+    \ar[r, "\Z \cdot -"] & \sAb 
+    \ar[r, "U"] & \Ch \ar[r, "H_*"] & \Ab.
+\end{tikzcd}\]
+
+We can now begin to see the relation between this construction and the one for magnitude homology in the previous section. However, in this case there is no further step of taking the tensor product with a functor of coefficients. In fact, it will be by choosing the appropriate functor of coefficients that we will recover the persistent homology construction, in the case where $S(X)$ is the enriched nerve of $X$.
+
+\begin{definition}
+    Let $J \subseteq [0,\infty]$ be an interval, i.e. a set such that $x,y \in J$ implies $z \in J$ for all $x \leq z \leq y$. The functor $\delta_J : [0,\infty] \to \Ab$ is given on objects by $\delta_J(l) = \Z$ if $l \in J$ and $0$ otherwise, and $\delta_J(l \leq l') = 1_\Z$ whenever $l, l' \in J$ and $0$ otherwise.
+\end{definition}
+
+We are interested in the chain complex $\mathrm{MC}(X) \otimes_{[0,\infty]^\opp} \delta_{[0,l]}$ for a fixed $l \in [0,\infty]$. Proceeding as in the previous section, we are looking for the coequaliser of the diagram
+\begin{equation}\label{eq:blurred_coeq}
+\begin{tikzcd}
+    \displaystyle \bigoplus_{m \geq m'} \mathrm{MC}(X)(m') \otimes \delta_{[0,l]}(m) \ar[r, shift left] \ar[r, shift right] &
+    \displaystyle \bigoplus_{m} \mathrm{MC}(X)(m) \otimes \delta_{[0,l]}(m).
+\end{tikzcd}
+\end{equation}
+Once again, we need only consider $m \leq l$, since $\delta_{[0,l]}(m)$ will be zero otherwise. This simplifies the diagram to
+\[\begin{tikzcd}
+    \displaystyle \bigoplus_{l \geq m \geq m'} \mathrm{MC}(X)(m') \ar[r, shift left] \ar[r, shift right] &
+    \displaystyle \bigoplus_{m \leq l} \mathrm{MC}(X)(m).
+\end{tikzcd}\]
+Now fix $l \geq m \geq m'$ and take a generator element of $\mathrm{MC}(X)(m')_n$, say $(x_0,\dots,x_n)$ with $X(x_0,x_1) + \cdots + X(x_{n-1},x_n) \leq m'$ (we are once again using the identification of Example \ref{ex:metric_nerve}). The top map sends it to the same generator in $\mathrm{MC}(X)(m)_n$, while the second one is the identity on $\mathrm{MC}(X)(m')_n$. These two elements are then identified in the coequaliser. Taking $m = l$, we see that all direct summands on the right are identified with the corresponding subgroup of $\mathrm{MC}(X)(l)_n$, showing that the coequaliser is exactly $\mathrm{MC}(X)(l)$. The boundary maps descend to this quotient and become the original boundary map of $\mathrm{MC}(X)(l)$. Hence, we conclude that 
+\[\mathrm{MC}(X) \otimes_{[0,\infty]^\opp} \delta_{[0,l]} \cong \mathrm{MC}(X)(l).\]
+
+In fact, more is true. We already have that $\mathrm{MC}(X)$ is a functor $[0,\infty] \to \Ch$. It turns out that we can also make $\mathrm{MC}(X) \otimes_{[0,\infty]^\opp} \delta_{[0,-]}$ into a functor $[0,\infty] \to \Ch$, and both are naturally isomorphic. Indeed, whenever $l \leq l'$, we have a natural transformation $\delta_{[0,l]} \to \delta_{[0,l']}$ given on each object by inclusion. This in turn gives a natural transformation between the two diagrams whose coequaliser gives the tensor product, and hence a map between the respective tensor products. Explicitly, the map on the right-hand side of the diagram \eqref{eq:blurred_coeq} is given by including each of the direct sum factors: 
+\[\mathrm{MC}(X)(m) \otimes \delta_{[0,l]}(m) \hookrightarrow \mathrm{MC}(X)(m) \otimes \delta_{[0,l']}(m).\]
+The resulting map in the quotient is then precisely the inclusion $\mathrm{MC}(X)(l) \hookrightarrow \mathrm{MC}(X)(l')$, showing that our isomorphism is natural in $l$. The homology of the functor $\mathrm{MC}(X) \otimes_{[0,\infty]^\opp} \delta_{[0,-]}$ is sometimes called the \textbf{blurred magnitude homology of $X$} This proves the following theorem.
+
+\begin{theorem}[\cite{Otter2018}]
+    Let $X$ be a metric space. There is a natural isomorphism
+    \[\mathrm{MC}(X) \otimes_{[0,\infty]^\opp} \delta_{[0,-]} \cong \mathrm{MC}(X).\]
+    In particular, the persistent homology of $X$ with respect to the enriched nerve is isomorphic to the blurred magnitude homology of $X$.
+\end{theorem}
+
+This shows that magnitude homology, in the generality of Definition \ref{def:mag_hom}, subsumes persistent homology when using the enriched nerve as the way of constructing a simplicial set from a metric space. However, it was later realised that, to produce a sensible categorification of magnitude, magnitude homology should be taken with coefficient functors of the form $\delta_l$, which throw away the persistent information by singling out a length in $[0,\infty]$.
+
+A comment about the choice of the enriched nerve as a simplicial set construction for persistent homology is in order. Recall from Section \ref{sec:simplicial} that two of the commonly chosen abstract simplicial complexes for this purpose are the \v Cech and the Vietoris--Rips complexes. The first has a very tangible geometric meaning, since we say it has the same homology as the spaces $X_\eps$ we considered in that section; whereas the second is closely related to the first and has the benefit of being easier to compute. A priori, the enriched nerve carries no obvious geometric interpretation. In fact, there is no hope of relating it to either of these two complexes. For instance, suppose we have a tuple $(x_0,\dots,x_n)$ of points of $X$ such that $d(x_i,x_{i+1}) = \eps$. Then $\{x_0,\dots,x_n\}$ is a simplex of $R_\eps(X)$ but not of $N(X)(\delta)$ for any $\delta < n\eps$. Taking $n$ arbitrarily large, we see that no chain of embeddings such as \eqref{eq:cech_rips_embeddings} can exist relating the enriched nerve and $R_{-}(X)$ or $C_{-}(X)$.

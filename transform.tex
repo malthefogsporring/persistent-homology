@@ -1,0 +1,223 @@
+\section{The Persistent Homology Transform Sheaf}
+
+In the spirit of studying the homology of a family of topological spaces indexed by a real parameter, in this section, we wish to define a statistic called the \textit{Persistent Homology Transform Sheaf}. The reason why this construction is useful is that the Persistent Homology Transform is a sufficient statistic. i.e it is injective on its domain, so it can tell apart any two distinct shapes. 
+
+The PHT was first introduced in \cite{Turner2014PHT} as a statistic to compare different subsets of \(\R^n\), it was expanded upon in \cite{Curry2018Directions} and \cite{Arya2022ShapeSpace}, where the PHT was defined as a sheaf, adding continuity conditions to the definition of the transform. In this section, we will give an overview of the definitions and theorems that make the PHT useful. 
+
+For this section, we fix a field \(\F\), such as \(\Q\) or \(\R\), and suppose that all (co)homologies and dimension calculations are assumed to be over the field \(\F\).
+
+\subsection{Constructible sets}
+
+To avoid pathological sets such as fractals or the Cantor set, we will work over \textit{definable sets} and \textit{constructible sets}, which are well-behaved subsets of \(\R^d\). 
+
+We use the definition of an \(o\)-minimal structure given in \cite{dries1998}.
+\footnote{There are definitions of o-minimality given in  \cite{Arya2022ShapeSpace} and \cite{Curry2018Directions}, but it seems those definitions maybe be incomplete, so our definition is taken from the original source \cite{dries1998} instead.}
+
+\begin{definition}[o-minimal structures, definable and constructible sets]\label{def:constructible_sets}
+
+An o-minimal structure is a collection of sets \(\mathcal{O}=(\mathcal{O}_d)_{d\in \Z^+}\) such that:
+
+\begin{enumerate}
+    \item \(\mathcal{O}_d\) is a collection of subsets of \(\R^d\). 
+    \item \(\mathcal{O}_d\) is closed under union, intersections, and complements, and contains the empty set and \(\R^d\). \footnote{We call sets that satisfy this condition a \textit{boolean algebra}}
+    \item If \(A\in \mathcal{O}_d\), then \(A\times \R, \R\times A\in \mathcal{O}_{d+1}\). 
+    \item \(\{(x_1,x_2,\dots,x_n)\in \R^n : x_1=x_n\}\in \mathcal{O}_n\)
+    \item Let \(\pi:\R^{d+1}\rightarrow \R^d\) be the projection map onto the first \(d\) co-ordinates, then \(\pi(\mathcal{O}_{d+1})\subset \mathcal{O}_d\). 
+    \item \(\{(x,y):x<y\}\in\mathcal{O}_2\)
+    \item \(\mathcal{O}_1\) contains precisely the finite unions of intervals and points. 
+\end{enumerate}
+
+An element of \(M\in \mathcal{O}_d\) is called \textit{definable}. 
+
+If \(M\) is also compact, then we say \(M\) is \textit{constructible}. Let \(\mathcal{CS}(\R^d)\) be the constructible sets in \(\mathcal{O}_d\).
+\end{definition}
+
+A definable set is nice in the following sense: 
+
+\begin{theorem}[Triangulation Theorem \cite{dries1998}]
+    Every definable set \(M\in \mathcal{O}_d\) is triangulable. 
+\end{theorem}
+
+Intuitively a definable set is just a sufficiently `nice' set, and one can think of a set in \(\mathcal{CS}(\R^d)\) just as any reasonably defined subset of \(\R^d\). In particular, any semi-algebraic set, i.e. a set that is defined by a finite number of polynomial equations or inequalities, is definable \cite{dries1998}. 
+
+
+\subsection{The Persistent Homology Transform}
+
+Given a set \(M \subset\R^d\) and a direction \(v\in S^{d-1}\subset \R^d\), we wish to filter \(M\) in the direction of \(v\), we define:
+
+\[M(v,t) = \{x\in M: x\cdot v \leq t\}\]
+
+Note that varying the value of \(t\) gives a filtration of spaces. We can think of this set as the intersection of \(M\) with a half-space cut out by a hyperplane perpendicular to \(v\). We note that if \(M\) is additionally a simplicial complex, then this is in fact homotopy equivalent to the full sub-complex spanned by all vertices in the halfspace:
+
+\begin{proposition}
+    Suppose \(M=\bigcup_{\sigma \in \Delta} \sigma\) is triangulable, then \(M(v,t\) is homotopy equivalent to the union of sets:
+    \[\{\sigma\in\Delta: x\cdot c\leq t\}\]
+\end{proposition}
+
+Before defining the sheaf-theoretic construction of the Persistent Homology Transform, we first define the Persistent Homology Transform (PHT) in terms of persistence diagrams. Recall the definitions of a Persistence Diagram and their bottleneck distance in definitions \ref{def:persistence_diagram} and \ref{def:barcode_bottleneck_distance} respectively. We denote by \(\mathcal{D}\) the space of persistence diagrams equipped with the bottleneck distance metric. 
+
+Since \(M(v,t)\) gives a filtration, we can take the \(k\)th homology \(H_k(M(v,t))\) and by the structure theorems in section \ref{sec:structurethm}, we can associate the homology groups of this filtration with a persistence diagram, which we will denote \(PH_k(M,v)\)
+
+
+\begin{definition}
+    Given a constructible set \(M\in \mathcal{CS}(\R^d)\), the \textit{Persistent Homology Transform} of \(M\) is a map \(\operatorname{PHT}(M):S^{d-1}\rightarrow \mathcal{D}^d\) given by:
+    \[v\mapsto (PH_0(M,v),PH_1(M,v),\dots,PH_d(M,v))\]    
+\end{definition}
+
+The Persistent Homology Transform effectively gives all homological information of the shape in all filtered directions. 
+
+We can additionally consider the Euler Characteristic of these filtered spaces, and define the \textit{Euler Characteristic Transform} (ECT):
+
+\begin{definition}
+    Define the Euler Characteristic function \(\chi(M,v):\R\rightarrow \Z\) given by:
+    \[\chi(M,v)(t)= \sum_{i=0}^d(-1)^d\operatorname{dim}H_i(M(v,t))\]
+
+    Then the Euler Characteristic Transform is the map: \(\operatorname{ECT}(M):S^{d-1}\rightarrow \Z^\R\) given by:
+    \[\operatorname{ECT}(M):v\mapsto\chi(M,v)\]
+\end{definition}
+
+Notice that since the homology groups determine the Euler Characteristic, the ECT is uniquely determined by the PHT. 
+
+We quote this theorem from \cite{Curry2018Directions}:
+
+\begin{theorem}
+    The map \(\operatorname{ECT}:\mathcal{CS}(\R^d)\rightarrow \{S^{d-1}\times \R\rightarrow \Z\}\) is injective.
+\end{theorem}
+
+\subsection{The Sheaf Theoretic Version of PHT}
+
+In the definition of PHT above, We defined PHT as a map from the constructible sets to the space of persistent diagrams.
+
+
+
+
+
+In the last section we had a filtration of \(M\) along every direction \(v\) and real parameter \(t\). We wish to encode all of these filtrations into a single topological space, which we will call the auxiliary total space.
+
+\begin{definition}
+    For a given constructible set \(M\in \mathcal{CS}(\R^d)\) we define the auxiliary total space:
+    \[Z_M = \{(x,v,t)\in M\times S^{d-1}\times \R: x\cdot v\leq t\}\]
+\end{definition}
+
+Let \(f_M\) be the projection map \(f_M:Z_M\rightarrow S^{d-1}\times \R\) onto the final 2 coordinates. Then the fibres of this map precisely give a single filtration of \(M\):
+\[f_M^{-1}(v,t)=M(v,t)\]
+
+For each open set \(U\subset S^{d-1}\times \R\), the pullback of the open set \(f^{-1}U\) is a varying continuous family of filtrations of \(M\), and we can take their (co)homology, \(H^i(f^{-1}U)\). Since (co)homology is functorial, we have defined a pre-sheaf:
+\[U\mapsto H^i(f^{-1}U)\]
+
+\begin{definition}
+    For a constructible set \(M\in\mathcal{CS}(\R^d)\), the \textit{\(i\)th persistent homology transform sheaf} of \(M\), \(\operatorname{PHT}^i(M)\) is the sheafification of the above pre-sheaf.
+    \[\operatorname{PHT}^i(M)=\operatorname{sh}[U\mapsto H^i(f^{-1}U)]\]
+\end{definition}
+
+Given a fixed point \((v_0,t_0)\), the stalk of the sheaf \(\operatorname{PHT}^i\) at \((v_0,t_0)\) is precisely the \(i\)th cohomology group of the fibre \(M(v_0,t_0)\). 
+
+\subsection{Derived Version of PHT}
+
+We can generalise this further and define a version of the PHT in terms of a derived sheaf. Since the cohomology groups \(H^i\) of a topological space comes from its cochain complex, we can look directly at the cochain complexes to obtain all the cohomology groups. This gives the Derived Persistent Homology Transform, which was first defined in Remark 4.7 in \cite{Curry2018Directions}, but was expanded upon in \cite{Arya2022ShapeSpace}.
+
+\begin{definition}[PHT: Derived Version]
+    Fix a topological space \(X\), and let \(\mathcal{S}^p(U)\) denote the \(\F\)-vector space generated by singular \(p\)-cochains of \(U\subset X\). This is a functor (i.e. pre-sheaf), so define the sheafification:
+    \[\mathscr{S}^p(X)=sh[U\mapsto \mathcal{S}^p(U)]\]
+
+    Setting \(X=Z_M\), we obtain a flasque resolution of the constant sheaf of \(Z_M\):
+    \[0\rightarrow \F \rightarrow \mathscr{S}^0(Z_M)\rightarrow \mathscr{S}^1(Z_M)\rightarrow \cdots\]
+
+    Finally, we define the Derived Persistent Homology Transform associated to \(M\in\mathcal{CS}(\R^d)\) to be the pushforward of the above cochain complex along the projection map \(f_M:Z_M\rightarrow S^{d-1}\times \R\). 
+    
+    \[\operatorname{DPHT}(M) := 0\rightarrow f_{M*}\mathscr{S}^0(Z_M)\rightarrow f_{M*}\mathscr{S}^1(Z_M)\rightarrow \cdots\]
+
+    The image of this map is in the bounded derived category of sheaves over \(S^{d-1}\times \R\), so \(\operatorname{DPHT}:\mathcal{CS}(\R^d)\rightarrow \mathcal{D}^b(\mathbf{Shv}(S^{d-1}\times\R))\)
+\end{definition}
+
+Intuitively, the Derived Persistent Homology Transform of a constructible set \(M\) gives a complex of sheaves over \(S^{d-1}\times R\), where taking the stalk of a particular point \((v,t)\) will give the cochain complex needed to determine the cohomology groups of \(M(v,t)\).
+
+Turns out the DPHT is itself a sheaf on the category \(\mathcal{CS}(\R^d)\). But in order to make this precise we will need to define the notion of a Grothendieck Topology (since \(\mathcal{CS}(\R^d)\) is not a category of the form \(\operatorname{Open}X\)). 
+
+\subsection{Grothendieck Topologies and Homotopy Sheaves}
+
+In this section we want to treat each constructible set \(M\in \mathcal{CS}(\R^d)\) as a point in the `shape space' \(\mathcal{CS}(\R^d)\), and in doing so define a sheaf that takes each point \(M\) to its persistent homology transform. In order to do this, we first need to equip \(\mathcal{CS}(\R^d)\) with a \textit{Grothendieck Topology}. 
+
+Just like how \(\operatorname{Open}(X)\) forms a category for a given topological space \(X\), intuitively we want to think of objects in a category \(\mathcal{C}\) as open sets in a topology, then a Grothendieck Topology is a way of specifying open covers on this category, so that we can define a sheaf. 
+
+\begin{definition}[See \cite{Arya2022ShapeSpace}]
+Given a category \(\mathcal{C}\), a \textit{Grothendieck Topology} on \(\mathcal C\) is a specification of admissible covers \(\{U_i\rightarrow U\}\) for each object \(U\in\mathcal C\) satisfying the following:
+
+\begin{enumerate}
+        \item (Isomorphism) If \(f:U'\rightarrow U\) is an isomorphism, then \(\{f\}\) is a cover of \(U\).
+        \item (Composition) If \(\{f_i: U_i\rightarrow U\}\) is a cover of \(U\), and there is a cover \(\{g_{ij}:U_{ij}\rightarrow U_i\}\) for each \(U_i\), then:
+        \[\{f_i\circ g_{ij}:U_{ij}\rightarrow U\}\]
+        is a cover of \(U\).
+        \item (Base Change) If \(\{f_i: U_i\rightarrow U\}\) is a cover of \(U\), and \(V\rightarrow U\) is a morphism in \(\mathcal C\), then the pullback \(\{V\times_U U_i\rightarrow V\}\) forms a cover of \(V\)
+    \end{enumerate}
+\end{definition}
+
+Since the fibre product \(V\times_U U_i\) can be thought of as the intersection of \(V\) and \(U_i\), intuitively we can think of the base change axiom as specifying that restrictions of an open cover to a smaller open set give a cover of the smaller open set.
+
+\begin{theorem}
+    Consider the poset \(\mathcal{CS}(\R^d)\) ordered by inclusion as a category. Then \(\mathcal{CS}(\R^d)\) admits a Grothendieck Topology.
+\end{theorem}
+
+\begin{proof}
+    We say that \(\{M_i\hookrightarrow M\}\) is a cover if and only if \(\cup M_i = M\). i.e. it is a cover in the normal sense. Then pullbacks are just intersections, and since \(\mathcal{CS}(\R^d)\) is closed under intersections pullbacks exist. Then the 3 conditions follow directly from properties of sets. 
+\end{proof}
+
+
+We can now define the notion of a pre-sheaf on a Grothendieck Topology. If \(\mathcal C\) is a category equipped with a Grothendieck Topology, then a pre-sheaf of \(\mathcal{C}\) is simply a contravariant functor from \(\mathcal{C}\). In order to be a sheaf we must add an extra condition, which can be motivated as follows: For a sheaf \(\mathcal{F}\), its global sections should agree with its zeroth \v{C}ech cohomology. So in general we simply force that a sheaf should have this property, which is also called \v{C}ech descent \cite{Dugger2002HypercoversAS}.
+
+\begin{definition}
+    Let \(\mathcal C\) be a category equipped with a Grothendieck Topology, then a sheaf on \(\mathcal{C}\) is a functor \(\mathcal{F}:\mathcal{C}^{op}\rightarrow \mathcal{A}\) for some category \(\mathcal{A}\) such that when \({U_i\rightarrow U}\) is a cover of \(U\) there is an isomorphism:
+    \[\mathcal{F}(U)\cong \lim\left[\prod_{i}\mathcal{F}(U_i) \rightrightarrows \prod_{i,j}\mathcal{F}(U_{ij}) \right]\]
+
+    Where \(U_{ij}=U_i\times_UU_j\), which we can intuitively think of as the intersection of \(U_i\) and \(U_j\).
+\end{definition}
+
+In general, the derived category of an abelian category is not abelian, and the above limit may not be well defined. In this case we may replace \(\lim\) with instead a homotopy limit (see \cite{Lambrechts2013Holim}, denoted \(\operatorname{holim}\). In this case, we say that \(\mathcal{F}\) is a \textit{Homotopy Sheaf} \cite{Arya2022ShapeSpace}.
+
+Finally with these notions defined, we can state the following theorem, which is proved in \cite{Arya2022ShapeSpace}:
+
+\begin{theorem}
+    The Derived Persistent Homology Transform is a Homotopy Sheaf
+    \[\operatorname{DPHT}: \mathcal{CS}(\R^d)^{op}\rightarrow \mathcal{D}^b(\mathbf{Shv}(S^{d-1}\times\R))\]
+\end{theorem}
+
+The importance of the DPHT being a sheaf is essentially that it inherits the local continuity condition of sheaves. i.e. Points in \(\mathcal{CS}(\R^d)\) that are `close' together have a similar DPHT. 
+
+
+\subsection{Stability and Sampling}
+
+We want that shapes with the same homology and have points `near' each other, to also have DPHTs that are close together. Recall the notion of \(\epsilon\)-interleaving from Definition \ref{def:epsilon_interleaving}. The Derived Persistent Homology Transform is stable in the following sense:
+
+\begin{theorem}
+    Suppose \(M,N\in \mathcal{CS}(\R^d)\) be homotopy equivalent sets with the homotopy equivalence given by \(\phi:M\rightarrow N\) and \(\psi:N\rightarrow M\). Let: \[\epsilon = \sup_{x\in M, y\in N}\left(||x-\phi(x)||^2, ||y-\psi(y)||^2\right)\]
+    Then \(\operatorname{DPHT}(M), \operatorname{DPHT}(N)\) are \(\epsilon\)-interleaved.
+\end{theorem}
+
+We now state some results on the effectiveness of determining a manifold \(M\) via randomly chosen points on the manifold. 
+
+Suppose \(M\subset \R^d\) is a compact manifold, and we wish to investigate the homology of \(M\) by taking a random sample of \(n\) points \(\bar{x}=\{x_1,\dots,x_n\}\) in \(M\), chosen independently and identically from a uniform distribution on \(M\). 
+
+We associate to \(M\) a \textit{condition number} \(\tau\), which is the largest real number such that the normal bundle of \(M\) can be realised as a tubular neighborhood of \(M\) of radius \(r\) for all \(r<\tau\). 
+
+Suppose \(0<\epsilon<\tau/2\), and define \(U\) to be the union of \(\epsilon\)-balls centred about each \(x_i\):
+\(U=\bigcup_{i}B_\epsilon(x_i)\)
+
+Then we have the following theorem from \cite{Niyogi2008FindingTH}:
+
+\begin{theorem}
+    There exist parameters \(\beta_1,\beta_2\) dependent on \(\tau,\epsilon\) and \(\operatorname{vol}(M)\), such that for \(\delta\in(0,1)\), if:
+    \[n>\beta_1\left(\log\beta_2+\log\frac 1\delta\right)\]
+    Then \(U\) has the same homology as \(M\) with probability \(>1-\delta\)
+\end{theorem}
+
+Given a union of balls \(U=\cup B_\epsilon(x_i)\), we define the \textit{Alpha complex} to be the realisation of the \v{C}ech complex (see definition \ref{def:cech_complex}). What this means is, instead of taking an abstract simplicial complex, so embed the simplicial complex into \(\R^d\) itself, with each point \(x_i\) corresponding to a vertex, and the simplex between a set of vertices is in the alpha complex if and only if the balls centered at the vertices have nontrivial intersection.
+
+The main result of \cite{Arya2022ShapeSpace} is that the DPHT of M and the alpha complex are \(\epsilon\)-interleaved:
+
+\begin{theorem}
+    Let \(M\subset \R^d\) be a compact manifold with condition number \(\tau\). \(\bar{x}=\{x_1,\dots,x_n\}\) be \(n\) points chosen from \(M\) with identical and independent uniform distributions. Define \(U=\cup_{\bar x} B_\epsilon(x_i)\) and \(K\) be the alpha complex of \(U\). 
+
+    If \(0<\epsilon<\tau/2\), and \(\beta_1, \beta_2\) are appropriately defined constants, and 
+    \[n>\beta_1\left(\log\beta_2+\log\frac 1\delta\right)\]
+    Then with probability \(>1-\delta\), the sheaves \(\operatorname{DPHT}(M), \operatorname{DPHT}(K)\) are \(\epsilon^2\)-interleaved.
+\end{theorem}

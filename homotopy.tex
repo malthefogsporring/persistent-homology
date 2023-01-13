@@ -1,0 +1,131 @@
+\section{Persistent homotopy theory}
+The homotopy groups of topological spaces are refinements of singular homology, seeing strictly more geometric information. If we can build a persistent homotopy theory, it will identify the geometry of a data set more finely than persistent homology, although it will be harder to compute. We will use a modern view of homotopy theory, where homotopy types are built from nice simplicial sets, as this simplifies the situation. In particular, there is a nice simplicial set arising from the Vietoris-Rips complex of a data set.
+
+\subsection{Simplicial homotopy theory} We will first need to build some foundations of simplicial homotopy theory. This section closely follows the exposition given in \cite{Land}. As is standard in homotopy theory, we let $Top$ be the category of compactly generated Hausdorff spaces.
+
+Let $\Delta$ be the category whose objects are finite, non-empty, totally ordered sets $[n]=0<1<2<\dots<n$, and whose maps are order-preserving maps. A \textbf{simplicial set} $X\in sSet$ is a presheaf on $\Delta$, that is, a functor $X:\Delta^{op}\rightarrow \textbf{Set}$. Note in contrast to a simplicial complex, the vertices $X[0]$ in a simplicial set have a total order.
+\begin{example}
+    $\Delta^n$ is the simplicial set represented by $[n].$ Concretely, $\Delta^n=\text{Hom}_\Delta(-,[n])$.
+\end{example}
+
+\begin{example}
+    Given any category $C$ we can form the simplicial set $[n]\mapsto \text{Fun}([n],C)$, called the \textbf{nerve} $N(C).$ Note $\Delta^n=N([n]).$ The nerve construction is functorial, giving a functor $N:Cat\rightarrow sSet$. Furthermore, this functor admits a left adjoint \cite{Land}. This makes the homotopy theory of nerves of categories particularly nice.
+\end{example}
+
+For every topological space $X$ we get a simplicial set $S(X)$, called the singular simplicial set of $X$. It is defined as
+$$S(X):[n]\mapsto\text{Hom}_{Top}(\Delta^n_{Top},X),$$
+where $\Delta^n_{Top}$ is the topological $n-$simplex defined in \ref{sec:simplicial}.
+%: the subset of $\mathbb{R}^{n+1}$ consisting of tuples $(t_0,\dots t_n)$ such that $\Sigma t_i=1$ and $t_i\geq 0$. So $\Delta^0_{Top}$ is a point, $\Delta^1_{Top}$ is a line-segment, $\Delta^2_{Top}$ is a filled-in equilateral triangle, and so on
+The singular simplicial set therefore consists of all the ways to map topological simplices into $X$.
+
+Dually, a simplicial set $X$ gives rise to a topological space $|X|$, called the geometric realization, similar to the geometric realization of a simplicial complex defined in Section \ref{sec:simplicial}. It can be defined very concisely as
+\[|X|=\underset{\Delta^n\in \Delta/X}{\text{colim}} \Delta^n_{Top}\]  Here $\Delta/X$ is the \textbf{slice category} whose elements are maps $\Delta^n\rightarrow X$ in $sSet$ and whose maps are maps $\Delta^n\rightarrow \Delta^m$ making the relevant triangles commute. More concrete formulas for the geometric realisation also exist (see Example \ref{coend-geometric-realisation}), but let us take the following as motivation for why this is the right definition: we want geometric realization to be a functor adjoint to taking the singular simplicial set. In particular, $|-|$ must preserve colimits. Now by a Yoneda-lemmic argument, every simplicial set is a colimit of representables: $$X\cong \underset{\Delta^n\in \Delta/X}{\text{colim}}\Delta^n,$$ so defining a colimit-preserving functor on $sSet$ is entirely determined by where the $\Delta^n$ are sent. For geometric realisation we want to map $\Delta^n$ to $ \Delta^n_{Top}$, giving us the above definition. Then, as promised, we have the following lemma:
+\begin{lemma}\label{geometric-realization-left-adjoint}
+Geometric realisation is left adjoint to the singular simplicial set functor.
+\end{lemma}
+\begin{proof}
+    \[Hom_{Top}(|X|,Z)\cong  Hom_{Top}(\text{colim}\Delta^n_{Top},Z)\cong \text{lim}Hom_{Top}(\Delta^n_{Top},Z)\]
+    \[\cong\text{lim}Hom_{sSet}(\Delta^n,S(Z))=Hom_{sSet}(\text{colim}\Delta^n,S(Z))\cong Hom_{sSet}(X,S(Z)). \]
+    The fact that $Hom_C(-,Z)$, for a fixed $Z$ in any category $C$, sends limits to colimits is proven directly by the universal property of (co)limits. \cite{Land}\end{proof}
+
+%\begin{remark}
+%    This adjunction is not monadic. The inclusion $i: \Delta^1_{Top}\rightarrow \Delta^0_{Top}$ of the unit interval into a point is not a homeomorphism, but the induced map in $sSet$ $i^*:\Delta^1\rightarrow \Delta^0=$. It follows that Beck's monadicity theorem fails.
+%\end{remark}
+
+Lemma \ref{geometric-realization-left-adjoint} shows a close relationship between simplicial sets and topological spaces. The geometric realisation is always a CW-complex \cite{Land}, and furthermore the arising monad on $Top$ is a CW-approximation, i.e. the counit $\epsilon_X:|S(X)|\rightarrow X$ is a weak homotopy equivalence\footnote{This map is not a homotopy equivalence in general, as there are spaces not homotopy equivalent to a CW-complex. A classical example is the Hawaiian earring. 
+} \cite{May}.
+
+\begin{definition}
+    For $0\leq j \leq n$, the $\mathbf{j-}$\textbf{horn} $\Lambda^n_j$ is the simplicial subset of $\Delta^n$ consisting of the $k-$simplices $[k]\rightarrow [n]$ whose image does not contain $[n]/j$.
+\end{definition}
+
+\begin{remark}
+    The geometric realization of a horn is a topological horn. Explicitly, $|\Lambda^n_j|$ is the subspace of $\Delta^n_{Top}$ given by removing its interior and the interior of the $j-$th face.
+\end{remark}
+
+\begin{definition}\label{def-kan-complex}
+    A simplicial set $X$ is called a \textbf{Kan complex} if every horn inclusion admits a lift:
+
+    % https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRAB12AZOgWwCModAHpgA+gCsQAX1LpMufIRRkAjFVqMWbTgBEYDHCMKz52PASKryG+s1aIQADRkaYUAObwioAGYAnCF4kMhAcCCQAJlMQAKCQ6nCkVRi44MRrMIjESOoGLDAHECE4AAt3EGo7bUdOGAAPLDgcBDy6fgMABQULZRB-LA9SnFdpIA
+\[\begin{tikzcd}
+\Lambda^n_j \arrow[r] \arrow[d]         & X \\
+\Delta^n \arrow[ru, "\exists"', dashed] &  
+\end{tikzcd}\]
+\end{definition}
+
+\begin{proposition}
+    For any $X\in Top,$ $S(X)$ is a Kan complex.
+\end{proposition}
+\begin{proof}
+By adjunction, finding such a lift is equivalent to finding a lift
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRAB8AdTgGToFsARlDoA9MAH0AVuxABfUuky58hFGQCMVWoxZsunACIwGOMWFkKl2PASIby2+s1aIOADUvaYUAObwiUAAzACcIfiQyEBwIJAAmajgACywgnEirEFDwyOoYpA1M7IjEB2jYxASQBiwwVxARZJ8Qamc9N24YAA8sOBwEagY6QRMABWVbNRAQrF8k9LkKOSA
+\[\begin{tikzcd}
+\vert\Lambda^n_j\vert \arrow[r] \arrow[d]         &  X \\
+\vert\Delta^n\vert \arrow[ru, "\exists"', dashed] &    
+\end{tikzcd}\]
+The inclusion of the topological horn admits a deformation retract, giving the lift. \cite{Land}
+\end{proof}
+
+\begin{definition}\label{def:infinity-category}
+    A simplicial set $X$ is called an $\infty-$category if it has lifts for all \textit{inner} horn inclusions, i.e. unique lifts of the form given in Definition \ref{def-kan-complex}, but where $0<j<n$.
+\end{definition}
+
+\begin{example}\label{nerve-is-infty}
+The nerve $N(C)$ of a category is an $\infty-$category. In fact, a stronger statement is true: a simplicial set is the nerve of a category if and only if it has \textit{unique} lifts for all inner horn inclusions \cite{Land}.
+\end{example}
+%Definition \ref{def:infinity-category} is sufficient for us to define the fundamental group of an $\infty-$category purely combinatorial. This has theoretical advantage to taking $\pi_1$ of the geometric realisation, and the two are equivalent a suitable sense \todo{?}. (...)
+
+We finish by defining a \textit{homotopy} between maps of simplicial sets strictly combinatorically. 
+
+\begin{definition}
+    A homotopy $h$ between two maps $f,g:X\rightarrow Y$ of simplicial sets is a map $h:X\times \Delta^1\rightarrow Y$ such that the restriction to the endpoints gives $f$ and $g$.
+\end{definition}
+
+This definition can be motivated by the fact that geometric realisation preserves finite products, taken from \cite{Gabriel}. This does rely on our definition of $Top$ as the category of \textit{compactly generated} topological spaces, which has a different product than the standard category of topological spaces - it is the compact generation of the standard product. Recalling that $|\Delta^1|=[0,1]$ is the standard interval, applying the geometric realisation to a homotopy $h:X\times \Delta^1\rightarrow Y$ gives a homotopy $h:|X|\times I\rightarrow |Y|$ between the geometric realisations of $f$ and $g$ in the sense of algebraic topology.
+
+%This definition can be motivated by noticing that applying the geometric realisation (which preserves products as it is 
+\begin{lemma}\label{lem:natural-transformation-is-homotopy}
+    A natural transformation $\alpha$ between functors $F,G:C\rightarrow D$ gives rise to a homotopy $N(\alpha):N(F)\Rightarrow N(G)$. 
+    \end{lemma}
+\begin{proof}A natural transformation is the same thing as a functor $\alpha:C\times [1]\rightarrow D$ such that $\alpha(-,0)=F$ and $\alpha(-,1)=G$. The components $\alpha_c$ are given by $\alpha(c,0<1)$, and the naturality square, for $f:X\rightarrow Y\in C$, is the following:
+\[\begin{tikzcd}
+F(X) \arrow[d, "{\alpha(f,id_0)}"'] \arrow[r, "{\alpha(id_C,0<1)}"] & G(X) \arrow[d, "{\alpha(f,id_1)}"] \\
+F(Y) \arrow[r, "{\alpha(id_C,0<1)}"]                                & G(Y)                              
+\end{tikzcd}\]
+ Since the nerve is a right adjoint, it preserves products, so $N(\alpha):N(C)\times N([1])\rightarrow N(D)$. Recalling $\Delta^1=N([1])$ finishes the proof.
+\end{proof}
+
+\subsection{Homotopy interleavings}
+In this section we choose a nice simplicial set corresponding to a data set $X$, define a homotopy interleaving, and prove a stability result. Our approach closely follows that in \cite{Jardine}. We will restrict ourselves to homotopy types of finite data sets of metric spaces, but the theory can be generalised to "controlled equivalences of systems of spaces", essentially collections of spaces controlled by the poset $[0,\infty)$, see \cite{Jardine}.
+
+Given a data set $X\subset Y$ and $r\in [0,\infty)$, consider the poset $P_s(X)$ of subsets of $X$ such that $d(x,y)<r$ for all $x,y\in X$. We can then construct the nerve $N(P_s(X))\in sSet$. The $n-$simplexes are $n-$tuples of inclusions of subsets in $P_s(X)$. The geometric realisation of $N(P_s(X))$ is the barycentric subdivision of the Vietoris-Rips complex $R_s(X)$: we have a $0-$simplex for every simplex in $R_s(X)$, and we have a $n-$simplex exactly when we have an inclusion of $n+1$ simplices in increasing degrees. There is a natural weak equivalence between a simplicial complex and its barycentric subdivision, so in particular, we don't lose any information on the homotopy type by working with $P_s(X)$ instead of $R_s(X)$ \cite{Goerss2009}. We will additionally find advantages to working with the nerve of a small category. Another advantage is that the simplicial set structure on $P_s(X)$ is canonical while building a simplicial set structure on $R_s(X)$ depends on an ordering of the elements in $X$.
+
+We will define a \textit{homotopy interleaving} in this particular setting.
+\begin{definition}
+    A \textit{homotopy $2r$-interleaving} of a finite subset $X$ of a metric space $Y$ is a diagram
+    % https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRAAUB9OACgA0AlCAC+pdJlz5CKMgEYqtRizZdeATSGjx2PASKzS86vWatEHTsDgBqAEwAnYTw0ixIDDqn7yCk8vNcVnaO-JoKMFAA5vBEoABm9hAAtkhkIDgQSADMxkpmIABWrvGJKYhpGUgGiqZsWCDUDHQARjAM7BK60iD2WJEAFjjFIAnJ2dSViLa5teb1WiOlVROZUzP+hcOjZdWTOTUbADqHOP0wOHQiFMJAA
+\[\begin{tikzcd}
+P_s(X) \arrow[r, "j"] \arrow[d, "i"']      & P_{s+2r}(X) \arrow[d, "i"] \\
+P_s(Y) \arrow[r, "j"] \arrow[ru, "\theta"] & P_{s+2r}(Y)               
+\end{tikzcd}\]
+such that the upper triangle commutes and the lower triangle commutes up to a homotopy fixing $P_s(X)$. 
+    \cite{Jardine}
+    \end{definition}
+%Let us compare with Definition \ref{def:epsilon_interleaving}. (...)
+We will now prove a stability theorem. Recall the Hausdorff distance $d_H$ from Definition \ref{def:hausdorff-distance}.
+\begin{theorem}[Rips stability]
+Suppose $X\subset Y$ are finite subsets of a metric space $M$ such that $d_H(X,Y)<r$. Then there exists a homotopy $2r-$interleaving of $X$ in $Y$.
+\end{theorem}
+\begin{proof}
+The maps $i,j$ are the inclusions. For $y\in Y$ we define a retraction $\theta:Y\rightarrow X$ by picking $\theta(y)\in X$ such that $d(\theta(y),y)<r$, setting $\theta(y)=y$ if $y\in X$. By the comments after Definition \ref{def:hausdorff-distance}, $d(y,X)\leq sup_{y\in Y}d(y,X)\leq d_H(X,Y)<r$, so it is always possible to find such a $\theta(y)$. Given $A\in P_s(Y)$, and $\theta(y),\theta(y')\in \theta(A)$, $$d(\theta(y),\theta(y'))\leq d(\theta(y),y)+d(y,y')+d(\theta(y'),y')<s+2r$$ by the triangle inequality. It follows that $\theta$ defines a poset morphism $$\theta:P_s(Y)\rightarrow P_{s+2r}(X).$$ Since $\theta$ is a retract, $j^*=\theta^*i^*$. To show the bottom triangle commutes up to homotopy, we interpret the maps as functors between individual poset categories, and define natural transformations
+$\alpha:j\rightarrow i\theta\cup j$ and $\beta:i\theta\rightarrow i\theta \cup j$ whose components are given by inclusions. $i\theta(A) \cup j(A)\in P_{s+2r}$ since for $y,y'\in A$, $$d(y,i\theta(y'))<d(y,y')+d(y',i\theta(y'))<s+r.$$ By Lemma \ref{lem:natural-transformation-is-homotopy}, these natural transformations lift to homotopies after applying the nerve, and by compositionality of homotopies, we have a homotopy between $N(j)$ and $N(i\theta)$ as required.
+\cite{Jardine}
+\end{proof}
+
+The stability theorem implies, after applying the functor $\pi_n(N(-))$, that there exists a commutative diagram 
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRAB120sAKAOQAKAfTg8AGgEoJIAL6l0mXPkIoyARiq1GLNp279hogJpTZ8kBmx4CRNaQ3V6zVog5degocDgBqAEwATjI8JtJyClbKtuSaTjqueh7C3v5B4qYymjBQAObwRKAAZgEQALZIZCA4EEgAzI7aLiAAVgB6AFRmRSXliJXVSHZazmxYHSDUDHQARjAMAorWKiABWDkAFjhdIMVlddQDiH4NI65jneE7PYMHNUcn8S3jl7u9Q4f1w4+cOOswOHRnhQZEA
+\[\begin{tikzcd}
+\pi_n NP_s(X)) \arrow[r, "j^*"] \arrow[d, "i^*"']      & \pi_n (NP_{s+2r}(X)) \arrow[d, "i^*"] \\
+\pi_n (NP_s(Y)) \arrow[r, "j^*"] \arrow[ru, "\theta^*"] & \pi_n (NP_{s+2r}(Y))                 
+\end{tikzcd}\]
+Similar diagrams hold for homology and any other homotopy-invariant functor. 

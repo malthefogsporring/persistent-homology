@@ -1,0 +1,42 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+
+\usepackage[hyphens]{url}
+% Adrian's setup package, feel free to change
+%\usepackage[varphi]{basemath}
+\usepackage[mlmodern, varphi]{basemath}
+
+\usepackage{biblatex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\addbibresource{references.bib}
+
+
+\title{Persistent Homology (GlaMS)}
+\author{Yan Yau Cheng \and Malthe Sporring \and Adrián Doña Mateo}
+\date{December 2022}
+
+\newcommand{\extR}{\overline{\R}}
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\iso}{\cong}
+\newcommand{\grcat}{\mathbf{\F[t]\text{-}Mod^{f.t}_{gr}}}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\input{introduction.tex}
+
+\input{homotopy.tex}
+
+\input{transform.tex}
+
+\input{magnitude.tex}
+\newpage
+\printbibliography
+
+\end{document}
